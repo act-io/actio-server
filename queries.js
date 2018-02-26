@@ -24,17 +24,17 @@ function getAllUser(req, res, next) {
   }
 
 function postInUser(req, res, next) {
-    const test = req.body;
+    const data = req.body;
     console.log(test);
     console.log("virkar?");
 
-    //db.none("INSERT INTO user (username, email, password, birthDate, interests) VALUES ($1, $2, $3, $4, $5)", [name, data, gName])
-     // .then(posts => {
-      //  res.redirect(req.get('referer'));
-    //})
-     // .catch(error => {
-      // res.send(`<p>Gat ekki bætt gögnum við: ${error}</p>`);
-      //});
+    db.none("INSERT INTO users (name, age, username, password) VALUES ($1, $2, $3, $4)", [data.name, data.age, data.username, data.password])
+      .then(posts => {
+        res.redirect(req.get('referer'));
+    })
+      .catch(error => {
+       res.send(`<p>Gat ekki bætt gögnum við: ${error}</p>`);
+      });
 }
 
 

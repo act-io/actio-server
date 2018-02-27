@@ -36,24 +36,12 @@ function postInUser(req, res, next) {
 
 function login(req, res, next) {
   const body = req.body;
-  db.any('select username,password from users')
+  db.any('select username,password from users where $1 = username AND $2 = password', [body.username, body.password])
     .then(function (data){
       res.status(200)
         .json({
-          data: data
+          login: true
         });
-        console.log("data: " + data)
-        for (i in data)
-        {
-          console.log(body.username);
-          console.log(body.password);
-          console.log(data.username);
-          console.log(data.username); 
-          console.log('-----------');
-          
-          if(body.username === data.username && body.password === data.password)
-            res.send({status: true});
-        } 
     })
     .catch(function (err){
       return next(err);

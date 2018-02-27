@@ -45,13 +45,13 @@ function login(req, res, next) {
         for (i in data)
         {
           if(body.username === data.username && body.password === data.password)
-            res.send(true);
+            res.send({status: true});
         } 
     })
     .catch(function (err){
       return next(err);
     });
-  res.send(false);
+  res.send({status: false});
 }
 
 

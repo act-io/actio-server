@@ -58,7 +58,6 @@ function login(req, res, next) {
     .catch(function (err){
       return next(err);
     });
-  res.send({status: false});
 }
 
 

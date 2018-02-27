@@ -42,15 +42,15 @@ function login(req, res, next) {
         .json({
           data: data
         });
+        for (i in data)
+        {
+          if(body.username === data.username && body.password === data.password)
+            res.send({status: true});
+        } 
     })
     .catch(function (err){
       return next(err);
     });
-  for (i in data)
-  {
-    if(body.username === data.username && body.password === data.password)
-      res.send({status: true});
-  }  
   res.send({status: false});
 }
 

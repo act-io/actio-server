@@ -25,9 +25,6 @@ function getAllUser(req, res, next) {
 
 function postInUser(req, res, next) {
     const data = req.body;
-    console.log(data);
-    console.log("virkar?");
-
     db.none("INSERT INTO users (name, age, username, password) VALUES ($1, $2, $3, $4)", [data.name, data.age, data.username, data.password])
       .then(posts => {
         res.redirect(req.get('referer'));

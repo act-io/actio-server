@@ -42,8 +42,15 @@ function login(req, res, next) {
         .json({
           data: data
         });
+        console.log("data: " + data)
         for (i in data)
         {
+          console.log(body.username);
+          console.log(body.password);
+          console.log(data.username);
+          console.log(data.username); 
+          console.log('-----------');
+          
           if(body.username === data.username && body.password === data.password)
             res.send({status: true});
         } 

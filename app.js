@@ -23,7 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/users', queries.getAllUser);
 app.post('/users', queries.postInUser);
-
+app.post('/login', queries.login);
 
 
 

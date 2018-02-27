@@ -34,9 +34,29 @@ function postInUser(req, res, next) {
       });
 }
 
+function login(req, res, next) {
+  const body = req.body;
+  db.any('select username,password from users')
+    .then(function (data){
+      res.status(200)
+        .json({
+          data: data
+        });
+    })
+    .catch(function (err){
+      return next(err);
+    });
+  for (i in data)
+  {
+    if(body.username === data.username && body.password === data.password)
+      res.send({status: true});
+  }  
+  res.send({status: false});
+}
+
 
 module.exports = {
     getAllUser: getAllUser,
     postInUser: postInUser,
-
+    login: login,
   };

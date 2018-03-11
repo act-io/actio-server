@@ -1,3 +1,4 @@
+require('dotenv').config();
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -7,8 +8,8 @@ var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
-
-const queries = require('./queries');
+var login = require('./routes/login');
+var activities = require('./routes/activities');
 
 var app = express();
 
@@ -20,12 +21,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-app.get('/users', queries.getAllUser);
-app.post('/users', queries.postInUser);
-app.post('/login', queries.login);
-
-
-
+app.use(users);
+app.use(login);
+app.use(activities);
 
 module.exports = app;

@@ -1,12 +1,12 @@
 const db = require('./db');
 
 function login(req, res, next) {
-  const body = req.body;
+  const { username, password } = req.body;
   db
-    .any(
-      'select username,password from users where $1 = username AND $2 = password',
-      [body.username, body.password]
-    )
+    .any('select * from users where $1 = username AND $2 = password', [
+      username,
+      password,
+    ])
     .then(function(data) {
       if (data.length > 0) {
         res.status(200).json({

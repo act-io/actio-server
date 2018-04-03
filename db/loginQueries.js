@@ -16,7 +16,7 @@ function login(req, res, next) {
       } else {
         res.status(200).json({
           login: false,
-          data: [],
+          data: {},
         });
       }
     })

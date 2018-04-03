@@ -12,3 +12,8 @@ CREATE TABLE activities (
   description text NOT NULL, 
   location character varying(50) NOT NULL
 );
+
+CREATE TABLE usersAttendingActivity (
+  userId integer NOT NULL,
+  activityId integer NOT NULL
+);

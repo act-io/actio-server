@@ -10,6 +10,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var login = require('./routes/login');
 var activities = require('./routes/activities');
+var usersAttendingActivity = require('./routes/usersAttendingActivity');
 
 var app = express();
 
@@ -24,5 +25,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(users);
 app.use(login);
 app.use(activities);
+app.use(usersAttendingActivity);
 
 module.exports = app;

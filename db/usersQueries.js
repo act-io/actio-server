@@ -1,7 +1,5 @@
 const db = require('./db');
 
-const READ_USERS_BY_USERNAME = 'SELECT * FROM users WHERE username = $1';
-
 function getAllUsers(req, res, next) {
   db
     .any('select * from users')

@@ -1,4 +1,5 @@
-const db = require('./db');
+const { db, queryDb } = require('./db');
+const xss = require('xss'); // eslint-disable-line
 
 function getAllActivities(req, res, next) {
   db
@@ -30,32 +31,37 @@ function insertIntoActivities(req, res, next) {
     });
 }
 
-function getActivityById(req, res, next) {
+async function getActivityById(id) {
+  const result = await queryDb('SELECT * FROM activities WHERE id = $1', [
+    xss(id),
+  ]);
+  if (result.rowCount === 1) {
+    return result.rows[0];
+  }
+  return null;
+}
+
+function getActivityByIdMiddleware(req, res, next) {
   const { id } = req.params;
-  db
-    .any('SELECT * FROM activities WHERE id = $1', id)
-    .then(function(data) {
-      if (data.length > 0) {
-        res.status(200).json({
-          status: 'success',
-          data: data[0],
-          message: 'Retrieved activity by id',
-        });
-      } else {
-        res.status(200).json({
-          status: 'success',
-          data: [],
-          message: `No activity with the id ${id} found.`,
-        });
-      }
-    })
-    .catch(function(err) {
-      return next(err);
+  const activity = getActivityById(id);
+  if (activity) {
+    res.status(200).json({
+      status: 'success',
+      data: data[0],
+      message: 'Retrieved activity by id',
     });
+  } else {
+    res.status(200).json({
+      status: 'success',
+      data: [],
+      message: `No activity with the id ${id} found.`,
+    });
+  }
 }
 
 module.exports = {
   getAllActivities,
   insertIntoActivities,
   getActivityById,
+  getActivityByIdMiddleware,
 };

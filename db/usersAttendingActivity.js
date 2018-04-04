@@ -1,4 +1,7 @@
-const db = require('./db');
+const { db, queryDb } = require('./db');
+const xss = require('xss'); // eslint-disable-line
+
+const { getActivityById } = require('../db/activitiesQueries');
 
 function getAllUsersAttendingActivity(req, res, next) {
   db
@@ -56,25 +59,45 @@ function insertIntoUsersAttendingActivity(req, res, next) {
     });
 }
 
-function getActivitiesByUserId(req, res, next) {
+async function getActivitiesByUserId(userId) {
+  const result = await queryDb(
+    'SELECT * FROM usersAttendingActivity WHERE userid = $1',
+    [xss(userId)]
+  );
+
+  const activityIdArray = result.rows;
+  const actvities = activityIdArray.map(async (a) => {
+    const activity = await getActivityById(a.activityid);
+    return activity;
+  });
+
+  console.log('activities', actvities);
+
+  return Promise.all(actvities);
+}
+
+async function getActivitiesByUserIdMiddleware(req, res, next) {
   const { userId } = req.params;
-  db
-    .any('SELECT * FROM usersAttendingActivity WHERE userId = $1', userId)
-    .then(function(data) {
-      data = data.map((d) => d.activityid);
-      res.status(200).json({
-        status: 'success',
-        data,
-        message: 'Retrieved user by userId',
-      });
-    })
-    .catch(function(err) {
-      console.error(err);
+
+  const activities = await getActivitiesByUserId(userId);
+
+  if (activities.length > 0) {
+    res.status(200).json({
+      status: 'success',
+      data: activities,
+      message: 'Retrieved ALL activties that user is attending to',
     });
+  } else {
+    res.status(200).json({
+      status: 'success',
+      data: [],
+      message: `No activities found for userId = ${userId}`,
+    });
+  }
 }
 
 module.exports = {
   getAllUsersAttendingActivity,
   insertIntoUsersAttendingActivity,
-  getActivitiesByUserId,
+  getActivitiesByUserIdMiddleware,
 };

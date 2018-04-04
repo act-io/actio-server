@@ -3,11 +3,11 @@ var router = express.Router();
 const {
   getAllActivities,
   insertIntoActivities,
-  getActivityById,
+  getActivityByIdMiddleware,
 } = require('../db/activitiesQueries');
 
 router.get('/activities', getAllActivities);
 router.post('/activities', insertIntoActivities);
-router.get('/activities/:id', getActivityById);
+router.get('/activities/:id', getActivityByIdMiddleware);
 
 module.exports = router;

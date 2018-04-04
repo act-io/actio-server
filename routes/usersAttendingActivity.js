@@ -58,6 +58,6 @@ router.delete(
   '/usersattendingactivity/:userId&:activityId',
   deleteFromUsersAttendingActivityMiddleware
 );
-router.get('/usersattendingactivity/activity:activityId', getHowManyAttendees);
+router.get('/usersattendingactivity/activity/:activityId', getHowManyAttendees);
 
 module.exports = router;

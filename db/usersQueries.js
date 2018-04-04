@@ -140,8 +140,18 @@ async function findByUsername(username) {
   return null;
 }
 
+async function findByUsernameAndPassword({ username, password } = {}) {
+  const query = 'SELECT * FROM users WHERE $1 = username AND $2 = password';
+  const result = await queryDb(query, [xss(username), xss(password)]);
+  if (result.rowCount === 1) {
+    return result.rows[0];
+  }
+  return null;
+}
+
 module.exports = {
   readAll,
   create,
   findByUsername,
+  findByUsernameAndPassword,
 };

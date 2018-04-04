@@ -71,33 +71,28 @@ async function getActivitiesByUserId(userId) {
     return activity;
   });
 
-  console.log('activities', actvities);
-
   return Promise.all(actvities);
 }
 
-async function getActivitiesByUserIdMiddleware(req, res, next) {
-  const { userId } = req.params;
+async function deleteFromUsersAttendingActivity(userId, activityId) {
+  const result = await queryDb(
+    'SELECT * FROM usersAttendingActivity WHERE userid = $1 AND activityid = $2',
+    [xss(userId), xss(activityId)]
+  );
 
-  const activities = await getActivitiesByUserId(userId);
-
-  if (activities.length > 0) {
-    res.status(200).json({
-      status: 'success',
-      data: activities,
-      message: 'Retrieved ALL activties that user is attending to',
-    });
-  } else {
-    res.status(200).json({
-      status: 'success',
-      data: [],
-      message: `No activities found for userId = ${userId}`,
-    });
+  if (result.rows.length > 0) {
+    await queryDb(
+      'DELETE FROM usersAttendingActivity WHERE userid = $1 AND activityid = $2',
+      [xss(userId), xss(activityId)]
+    );
+    return result.rows[0];
   }
+  return null;
 }
 
 module.exports = {
   getAllUsersAttendingActivity,
   insertIntoUsersAttendingActivity,
-  getActivitiesByUserIdMiddleware,
+  getActivitiesByUserId,
+  deleteFromUsersAttendingActivity,
 };

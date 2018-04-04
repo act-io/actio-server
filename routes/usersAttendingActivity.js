@@ -3,11 +3,11 @@ var router = express.Router();
 const {
   getAllUsersAttendingActivity,
   insertIntoUsersAttendingActivity,
-  getActivitiesByUserId,
+  getActivitiesByUserIdMiddleware,
 } = require('../db/usersAttendingActivity');
 
 router.get('/usersattendingactivity', getAllUsersAttendingActivity);
 router.post('/usersattendingactivity', insertIntoUsersAttendingActivity);
-router.get('/usersattendingactivity/:userId', getActivitiesByUserId);
+router.get('/usersattendingactivity/:userId', getActivitiesByUserIdMiddleware);
 
 module.exports = router;

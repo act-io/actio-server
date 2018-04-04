@@ -134,7 +134,7 @@ async function create({ username, password, name, age } = {}) {
 async function findByUsername(username) {
   const query = 'SELECT * FROM users WHERE username = $1';
   const result = await queryDb(query, [xss(username)]);
-  if (result.rowCount === 1) {
+  if (result.rowCount > 0) {
     return result.rows[0];
   }
   return null;
@@ -143,7 +143,7 @@ async function findByUsername(username) {
 async function findByUsernameAndPassword({ username, password } = {}) {
   const query = 'SELECT * FROM users WHERE $1 = username AND $2 = password';
   const result = await queryDb(query, [xss(username), xss(password)]);
-  if (result.rowCount === 1) {
+  if (result.rowCount > 0) {
     return result.rows[0];
   }
   return null;

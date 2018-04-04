@@ -1,53 +1,147 @@
-const { db } = require('./db');
+const { db, queryDb } = require('./db');
+const validator = require('validator');
+const xss = require('xss'); // eslint-disable-line
 
-function getAllUsers(req, res, next) {
-  db
-    .any('select * from users')
-    .then(function(data) {
-      res.status(200).json({
-        status: 'success',
-        data: data,
-        message: 'Retrieved ALL users',
-      });
-    })
-    .catch(function(err) {
-      return next(err);
+/**
+ * Get validation error asynchronously.
+ *
+ * @param {Object} user - Note to create
+ * @param {string} user.username - Username of user
+ * @param {string} user.password- Password of user
+ * @param {string} user.name - Name of user
+ *
+ * @returns Array including objects including field and error if valdiation errors are found.
+ */
+
+async function validateNewUser({ username, password, name } = {}) {
+  const user = await findByUsername(username);
+  const validationArray = [];
+
+  if (user) {
+    validationArray.push({
+      field: 'username',
+      error: 'Notendanafn er þegar skráð',
     });
+  }
+
+  if (
+    !validator.isByteLength(username, {
+      min: 3,
+    })
+  ) {
+    validationArray.push({
+      field: 'username',
+      error: 'Notendanafn verður að vera amk 3 stafir',
+    });
+  }
+
+  if (
+    typeof password !== 'string' ||
+    !validator.isByteLength(password, {
+      min: 6,
+    })
+  ) {
+    validationArray.push({
+      field: 'username',
+      error: 'Lykilorð verður að vera amk 6 stafir',
+    });
+  }
+
+  if (
+    !validator.isByteLength(name, {
+      min: 1,
+    })
+  ) {
+    validationArray.push({
+      field: 'name',
+      error: 'Nafn má ekki vera tómt',
+    });
+  }
+
+  return validationArray;
 }
 
-function postInUsers(req, res, next) {
-  const data = req.body;
-  db
-    .none(
-      'INSERT INTO users (name, age, username, password) VALUES ($1, $2, $3, $4)',
-      [data.name, data.age, data.username, data.password]
-    )
-    .then((posts) => {
-      res.redirect(req.get('referer'));
-    })
-    .catch((error) => {
-      res.send(`<p>Gat ekki bætt gögnum við: ${error}</p>`);
-    });
+/**
+ * Read all users.
+ *
+ * @returns {Promise} Promise representing an array of all user objects
+ */
+async function readAll() {
+  const query = 'SELECT * FROM users';
+  try {
+    const result = await queryDb(query, []);
+    return result.rows;
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
 }
 
-function getUserByUsername(req, res, next) {
-  const { username } = req.params;
-  db
-    .any('SELECT * FROM users WHERE username = $1', username)
-    .then(function(data) {
-      res.status(200).json({
-        status: 'success',
-        data: data[0],
-        message: 'Retrieved user by username',
-      });
-    })
-    .catch(function(err) {
-      return next(err);
-    });
+/**
+ * Create a user asynchronously.
+ *
+ * @param {Object} user - Note to create
+ * @param {string} user.username - Username of user
+ * @param {string} user.password- Password of user
+ * @param {string} user.name - Name of user
+ * @param {string} user.age - Age of user
+ *
+ * @returns {Promise} Promise representing the object result of creating the note
+ */
+async function create({ username, password, name, age } = {}) {
+  const query =
+    'INSERT INTO users (username, password,name, age) VALUES ($1, $2, $3, $4) RETURNING *';
+  const user = {
+    username,
+    password,
+    name,
+    age,
+  };
+  const validation = await validateNewUser(user);
+  if (validation.length > 0) {
+    return {
+      success: false,
+      validation,
+      data: null,
+      message: 'Read validation message.',
+    };
+  }
+  const cleanArray = [xss(username), xss(password), xss(name), xss(age)];
+  const result = await queryDb(query, cleanArray);
+  const { id } = result.rows[0];
+  return {
+    success: true,
+    validation: [],
+    data: {
+      id,
+      username,
+      password,
+      name,
+      age,
+    },
+    message: 'User created.',
+  };
+}
+
+/**
+ * Get user by username.
+ *
+ * @param {string} username - Username of user
+ *
+ * @returns {Promise} Promise representing the note object or null if not found
+ */
+
+async function findByUsername(username) {
+  const query = 'SELECT * FROM users WHERE username = $1';
+  const result = await queryDb(query, [xss(username)]);
+  if (result.rowCount === 1) {
+    return result.rows[0];
+  }
+  return null;
 }
 
 module.exports = {
-  getAllUsers,
-  postInUsers,
-  getUserByUsername,
+  readAll,
+  create,
+  findByUsername,
 };

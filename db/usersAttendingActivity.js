@@ -99,7 +99,7 @@ function getHowManyAttendees(req, res, next) {
       
       res.status(200).json({
         status: 'success',
-        data: data,
+        data: data[0],
         message: 'Retrieved ALL Attendees',
       });
     })

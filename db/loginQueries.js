@@ -1,4 +1,4 @@
-const db = require('./db');
+const { db } = require('./db');
 
 function login(req, res, next) {
   const { username, password } = req.body;

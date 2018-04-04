@@ -91,9 +91,9 @@ async function deleteFromUsersAttendingActivity(userId, activityId) {
 }
 
 function getHowManyAttendees(req, res, next) {
-  const { activityID } = req.params;
+  const { activityId } = req.params;
   db 
-    .any('SELECT COUNT(*) FROM usersAttendingActivity WHERE activityId = $1',[xss(activityID)])
+    .any('SELECT COUNT(*) FROM usersAttendingActivity WHERE activityId = $1',[xss(activityId)])
     .then(function(data) {
       console.log(data);
       

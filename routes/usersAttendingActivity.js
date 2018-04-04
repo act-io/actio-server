@@ -5,6 +5,7 @@ const {
   insertIntoUsersAttendingActivity,
   getActivitiesByUserId,
   deleteFromUsersAttendingActivity,
+  getHowManyAttendees,
 } = require('../db/usersAttendingActivity');
 
 async function getActivitiesByUserIdMiddleware(req, res, next) {
@@ -57,5 +58,6 @@ router.delete(
   '/usersattendingactivity/:userId&:activityId',
   deleteFromUsersAttendingActivityMiddleware
 );
+router.get('/usersattendingactivity/:activityId', getHowManyAttendees);
 
 module.exports = router;

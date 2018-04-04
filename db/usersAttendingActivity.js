@@ -90,9 +90,26 @@ async function deleteFromUsersAttendingActivity(userId, activityId) {
   return null;
 }
 
+function getHowManyAttendees(req, res, next) {
+  const { activityID } = req.params;
+  db 
+    .any('SELECT COUNT(*) FROM usersAttendingActivity WHERE activityId = $1',[xss(activityID)])
+    .then(function(data) {
+      res.status(200).json({
+        status: 'success',
+        data: data,
+        message: 'Retrieved ALL Attendees',
+      });
+    })
+    .catch(function(err) {
+      return next(err);
+    });
+}
+
 module.exports = {
   getAllUsersAttendingActivity,
   insertIntoUsersAttendingActivity,
   getActivitiesByUserId,
   deleteFromUsersAttendingActivity,
+  getHowManyAttendees,
 };

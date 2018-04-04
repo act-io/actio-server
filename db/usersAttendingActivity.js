@@ -93,8 +93,10 @@ async function deleteFromUsersAttendingActivity(userId, activityId) {
 function getHowManyAttendees(req, res, next) {
   const { activityID } = req.params;
   db 
-    .any('SELECT COUNT(*)::integer FROM usersAttendingActivity WHERE activityId = $1',[xss(activityID)])
+    .any('SELECT COUNT(*) FROM usersAttendingActivity WHERE activityId = $1',[xss(activityID)])
     .then(function(data) {
+      console.log(data);
+      
       res.status(200).json({
         status: 'success',
         data: data,

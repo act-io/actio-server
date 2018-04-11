@@ -82,7 +82,7 @@ async function create({ username, password, name, age } = {}) {
   return {
     success: true,
     validation: [],
-    data: { id, username, password, name, age },
+    data: { id, username, hashedPassword, name, age },
     message: 'User created.',
   };
 }

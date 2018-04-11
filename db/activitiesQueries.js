@@ -20,8 +20,8 @@ function insertIntoActivities(req, res, next) {
   const data = req.body;
   db
     .none(
-      'INSERT INTO activities (title, description, location, start-time, end-time) VALUES ($1, $2, $3, $4, $5)',
-      [data.title, data.description, data.location, data.start-time, data.end-time]
+      'INSERT INTO activities (title, description, location, startTime, endTime) VALUES ($1, $2, $3, $4, $5)',
+      [data.title, data.description, data.location, data.startTime, data.endTime]
     )
     .then((posts) => {
       res.redirect(req.get('referer'));

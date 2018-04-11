@@ -10,7 +10,9 @@ CREATE TABLE activities (
   id serial PRIMARY KEY,
   title character varying(50) NOT NULL,
   description text NOT NULL, 
-  location character varying(50) NOT NULL
+  location character varying(50) NOT NULL,
+  start-time timestamp NOT NULL,
+  end-time timestamp NOT NULL
 );
 
 CREATE TABLE usersAttendingActivity (
